@@ -1,0 +1,38 @@
+{
+  "manifest_version": 3,
+  "name": "MOEIS A4 Formatter",
+  "version": "1.0.3",
+  "description": "Tukar Laporan PBD dan Slip Peperiksaan MOEIS PPB ke A4 potret, satu murid satu halaman.",
+  "icons": {
+    "16": "icons/16.png",
+    "48": "icons/48.png",
+    "128": "icons/128.png"
+  },
+  "action": {
+    "default_title": "MOEIS A4 Formatter",
+    "default_icon": {
+      "16": "icons/16.png",
+      "48": "icons/48.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://moeissppb.moe.gov.my/laporan/*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "run_at": "document_idle",
+      "all_frames": false,
+      "world": "ISOLATED"
+    }
+  ],
+  "minimum_chrome_version": "111",
+  "content_security_policy": {
+    "extension_pages": "default-src 'none'; script-src 'self'; object-src 'none'; base-uri 'none'"
+  }
+}

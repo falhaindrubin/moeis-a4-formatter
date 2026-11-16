@@ -1,0 +1,25 @@
+MOEIS A4 Formatter - Cara pasang (Chrome / Edge)
+
+1. Extract (unzip) fail MOEIS-A4-Formatter.zip ke folder tetap,
+   contoh: Documents\MOEIS-A4-Formatter  (jangan padam folder ini selepas pasang).
+2. Buka chrome://extensions
+3. Hidupkan "Developer mode" (suis di penjuru kanan atas).
+4. Klik "Load unpacked" dan pilih folder tadi.
+5. (Pilihan) Klik ikon kepingan puzzle di toolbar dan "pin" MOEIS A4 Formatter.
+
+Cara guna:
+- Buka Laporan PBD atau Slip Peperiksaan di moeissppb.moe.gov.my.
+- Klik butang biru "Format A4" di penjuru kanan bawah (atau klik ikon extension).
+- Butang bertukar kepada "Cetak (Ctrl+P)" - klik untuk cetak / Save as PDF.
+- Muat semula halaman untuk kembali ke paparan asal.
+
+Keselamatan:
+- Extension ini TIDAK menghantar, menyimpan atau membaca data ke mana-mana pihak.
+  Ia hanya menyusun semula paparan halaman di komputer anda.
+- Tiada kebenaran (permissions) khas diminta. Hanya aktif di
+  https://moeissppb.moe.gov.my/laporan/ sahaja.
+- Simpan folder extension di tempat selamat. Jika fail di dalamnya diubah oleh
+  orang lain, kodnya boleh diubah. Semak fail SHA256SUMS.txt jika ragu.
+- Dapatkan extension ini hanya daripada sumber yang dipercayai (pembuatnya sendiri).
+- PDF slip/laporan mengandungi data peribadi murid (No. KP). Simpan dan kongsi
+  dengan berhati-hati (PDPA). Padam salinan yang tidak diperlukan.

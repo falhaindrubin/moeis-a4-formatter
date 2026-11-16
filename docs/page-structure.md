@@ -22,8 +22,14 @@
 - Subject table header: `th` with `color:white`, background `#1C67B0` from `.box table thead th`, white inset borders.
 - "Ulasan Guru Kelas" table is only ~408px wide (value cell 200px) → comment wraps unless widened.
 
+## Laporan Kemahiran BM/BI — `/laporan/pbd/kemahiran/{a}/{b}/{classId}/{c}`
+- No `div.book`. Per student, as direct children of `<body>`:
+  `TABLE` (logos) → `CENTER > h3` (title) → `TABLE#table_header` (student details) → `div.box` (skills table `#maintable`, CEFR target table, 5 × `<br>`, signatures) → `CENTER > input.hide` (Kembali) → empty `div[style*="page-break-after:always"]` spacer (none after the last student).
+- Grouped by the fallback in `a4FormatMoeis()`: split body at the spacers, keep runs that contain a `.box`. Fit ≈ 0.73 zoom (32 students, max inner height 1040px).
+
 ## Gotchas
 - Both page types end with an inline `<script>window.print();</script>`, so the dialog opens before our `document_idle` content script runs. `print-guard.js` (MAIN world, `document_start`) overrides `window.print` to set `<html data-a4-print-requested="1">`; `content.js` then formats the page and calls `window.print()` itself.
 - Without `print-color-adjust:exact`, Chrome prints the white header text with no blue background (looks faint grey).
 - Elements outside `.a4sheet` (CENTER buttons) can create blank pages → hidden in print.
 - `.a4inner td` queries must run after wrapping, not before.
+- Kemahiran's print CSS sets `html, body { width: 297mm; height: 210mm }`. If `html` keeps that width, Chrome shrinks the whole printout to ~64% (190/297) → reset `html` too, not just `body`.

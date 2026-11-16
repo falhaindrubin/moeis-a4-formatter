@@ -2,11 +2,24 @@
 // MOEIS A4 Formatter — formats MOEIS PPB report pages to A4 portrait, one student per page.
 function a4FormatMoeis(){
 if(document.getElementById('a4fix'))return -1;
+const kids=[...document.body.children],groups=[],spacers=[];
+kids.forEach(e=>{
+  const n=e.nextElementSibling;
+  if(e.tagName==='TABLE'&&n&&n.classList.contains('book'))groups.push([e,n]);
+  else if(e.classList.contains('book')&&!(e.previousElementSibling&&e.previousElementSibling.tagName==='TABLE'))groups.push([e]);
+  else if(e.tagName==='DIV'&&!e.classList.contains('book')&&!e.textContent.trim()&&!e.querySelector('img'))spacers.push(e);
+});
+// Other layouts (e.g. PBD Kemahiran): one student = the run of body siblings between empty page-break spacers.
+if(!groups.length){let g=[];kids.forEach(e=>{if(spacers.includes(e)||e.tagName==='SCRIPT'){if(g.length)groups.push(g);g=[];}else g.push(e);});if(g.length)groups.push(g);
+  for(let i=groups.length-1;i>=0;i--)if(!groups[i].some(x=>x.matches('.box')||x.querySelector('.box')))groups.splice(i,1);}
+// Unknown layout: leave the page untouched, otherwise the print CSS below hides everything (blank printout).
+if(!groups.length)return 0;
+spacers.forEach(e=>e.remove());
 const st=document.createElement('style');st.id='a4fix';
 st.textContent=`@page{size:A4 portrait;margin:10mm}
 @media screen{html{background:#888}body{margin:0;padding:20px 0}.a4sheet{width:210mm;height:297mm;margin:0 auto 20px;background:#fff;box-shadow:0 0 8px rgba(0,0,0,.5);padding:10mm;overflow:hidden}}
 @media print{body{margin:0!important;padding:0!important}.a4sheet{width:190mm;height:277mm;padding:0;margin:0;overflow:hidden;page-break-after:always;break-after:page}.a4sheet:last-of-type{page-break-after:auto;break-after:auto}}
-body{width:auto!important;height:auto!important}
+html,body{width:auto!important;height:auto!important}
 *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
 @media print{body>*:not(.a4sheet){display:none!important}}
 .a4inner{transform-origin:top left}
@@ -16,13 +29,6 @@ body{width:auto!important;height:auto!important}
 .a4inner img{object-fit:contain!important}
 .a4inner .book,.a4inner .page{width:auto!important;height:auto!important;margin:0!important;padding:0!important;min-height:0!important}`;
 document.head.appendChild(st);
-const kids=[...document.body.children],groups=[];
-kids.forEach(e=>{
-  const n=e.nextElementSibling;
-  if(e.tagName==='TABLE'&&n&&n.classList.contains('book'))groups.push([e,n]);
-  else if(e.classList.contains('book')&&!(e.previousElementSibling&&e.previousElementSibling.tagName==='TABLE'))groups.push([e]);
-  else if(e.tagName==='DIV'&&!e.classList.contains('book')&&!e.textContent.trim()&&!e.querySelector('img'))e.remove();
-});
 const mm=96/25.4,AW=190*mm,AH=277*mm;
 groups.forEach(g=>{const hdr=g[0],book=g[g.length-1];
   const sheet=document.createElement('div');sheet.className='a4sheet';
@@ -41,18 +47,30 @@ return groups.length;
 
 function a4Run(){
   const n=a4FormatMoeis();
-  const btn=document.getElementById('a4moeis-btn');
-  if(n===-1){ if(confirm('Halaman sudah diformat. Muat semula untuk paparan asal?')) location.reload(); return; }
+  if(n===-1){ if(confirm('Halaman sudah diformat. Muat semula untuk paparan asal?')) a4Revert(); return; }
   if(!n){ alert('Format halaman ini tidak dikenali.'); return; }
-  if(btn){ const nb=btn.cloneNode(false); nb.textContent='🖨️ Cetak (Ctrl+P)'; nb.addEventListener('click',e=>{ if(e.isTrusted) window.print(); }); btn.replaceWith(nb); }
+  a4Formatted();
+}
+
+// The page calls window.print() on load, which auto-formats; '#a4-asal' tells the reloaded page to skip that once.
+function a4Revert(){ location.hash='a4-asal'; location.reload(); }
+
+// After formatting: main button becomes "Cetak", plus a "Paparan Asal" button to go back to the original layout.
+function a4Formatted(){
+  const btn=document.getElementById('a4moeis-btn');
+  if(!btn || document.getElementById('a4moeis-asal')) return;
+  const nb=btn.cloneNode(false); nb.textContent='🖨️ Cetak (Ctrl+P)'; nb.addEventListener('click',e=>{ if(e.isTrusted) window.print(); }); btn.replaceWith(nb);
+  const r=document.createElement('button'); r.id='a4moeis-asal'; r.type='button'; r.textContent='↩️ Paparan Asal';
+  r.addEventListener('click',e=>{ if(e.isTrusted) a4Revert(); });
+  document.body.appendChild(r);
 }
 
 function a4AddButton(){
   if(document.getElementById('a4moeis-btn')) return;
   // only show on pages that contain report blocks
-  if(!document.querySelector('.book')) return;
+  if(!document.querySelector('.book,.box')) return;
   const s=document.createElement('style');
-  s.textContent='#a4moeis-btn{position:fixed;right:20px;bottom:20px;z-index:2147483647;background:#1C67B0;color:#fff;border:0;border-radius:24px;padding:12px 18px;font:bold 14px Arial,sans-serif;box-shadow:0 2px 8px rgba(0,0,0,.35);cursor:pointer}#a4moeis-btn:hover{background:#155291}@media print{#a4moeis-btn{display:none!important}}';
+  s.textContent='#a4moeis-btn,#a4moeis-asal{position:fixed;right:20px;bottom:20px;z-index:2147483647;background:#1C67B0;color:#fff;border:0;border-radius:24px;padding:12px 18px;font:bold 14px Arial,sans-serif;box-shadow:0 2px 8px rgba(0,0,0,.35);cursor:pointer}#a4moeis-btn:hover{background:#155291}#a4moeis-asal{bottom:72px;background:#5f6b7a}#a4moeis-asal:hover{background:#465260}@media print{#a4moeis-btn,#a4moeis-asal{display:none!important}}';
   document.head.appendChild(s);
   const b=document.createElement('button');
   b.id='a4moeis-btn'; b.type='button'; b.textContent='📄 Format A4';
@@ -72,10 +90,12 @@ if(A4_OK){
   });
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',a4AddButton); else a4AddButton();
   // The page's own window.print() was intercepted by print-guard.js (MAIN world): format first, then print.
+  // Exception: '#a4-asal' (set by "Muat semula untuk paparan asal") keeps the original layout for this load only.
+  const keepOriginal=location.hash==='#a4-asal';
+  if(keepOriginal) history.replaceState(null,'',location.pathname+location.search);
   const de=document.documentElement;
   if(de.dataset.a4PrintRequested==='1'){
     delete de.dataset.a4PrintRequested;
-    a4FormatMoeis();
-    window.print();
+    if(!keepOriginal){ if(a4FormatMoeis()>0) a4Formatted(); window.print(); }
   }
 }

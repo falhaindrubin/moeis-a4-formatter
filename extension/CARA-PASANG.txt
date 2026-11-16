@@ -1,6 +1,6 @@
 MOEIS A4 Formatter - Cara pasang (Chrome / Edge)
 
-1. Extract (unzip) fail MOEIS-A4-Formatter.zip ke folder tetap,
+1. Extract (unzip) fail MOEIS-A4-Formatter-<versi>.zip ke folder tetap,
    contoh: Documents\MOEIS-A4-Formatter  (jangan padam folder ini selepas pasang).
 2. Buka chrome://extensions
 3. Hidupkan "Developer mode" (suis di penjuru kanan atas).
@@ -8,10 +8,16 @@ MOEIS A4 Formatter - Cara pasang (Chrome / Edge)
 5. (Pilihan) Klik ikon kepingan puzzle di toolbar dan "pin" MOEIS A4 Formatter.
 
 Cara guna:
-- Buka Laporan PBD atau Slip Peperiksaan di moeissppb.moe.gov.my.
+- Buka Laporan PBD, Laporan Kemahiran BM/BI atau Slip Peperiksaan di moeissppb.moe.gov.my.
 - Klik butang biru "Format A4" di penjuru kanan bawah (atau klik ikon extension).
 - Butang bertukar kepada "Cetak (Ctrl+P)" - klik untuk cetak / Save as PDF.
-- Muat semula halaman untuk kembali ke paparan asal.
+- Klik butang kelabu "Paparan Asal" untuk kembali ke paparan asal MOEIS.
+  (Muat semula biasa / F5 akan memformat semula secara automatik.)
+
+Kemas kini ke versi baharu:
+- Extract zip baharu dan GANTIKAN isi folder yang sama (Documents\MOEIS-A4-Formatter).
+- Di chrome://extensions, klik butang muat semula (anak panah bulat) pada MOEIS A4 Formatter.
+- Pastikan nombor versi pada kad extension sudah bertukar.
 
 Keselamatan:
 - Extension ini TIDAK menghantar, menyimpan atau membaca data ke mana-mana pihak.

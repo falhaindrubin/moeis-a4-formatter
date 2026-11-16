@@ -3,13 +3,15 @@
 
 Outputs (in dist/):
   - MOEIS-A4-Formatter-<version>.zip   Chrome extension, ready for "Load unpacked"
+  - MOEIS-A4-Formatter/                same extension, unpacked, for "Load unpacked" (fixed path, so ↻ picks up new builds)
+  - RELEASE-NOTES.md                   copy of CHANGELOG.md (build fails if current version has no entry)
   - SHA256SUMS.txt                     checksums of the zip and every extension file
   - bookmarklet.txt                    one-line bookmarklet built from the same core function
   - bookmarklet.html                   drag-to-bookmarks-bar install page
 
 Usage:  python3 scripts/build.py
 """
-import hashlib, json, pathlib, re, urllib.parse, zipfile
+import hashlib, json, pathlib, re, shutil, urllib.parse, zipfile
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 EXT = ROOT / "extension"
@@ -34,6 +36,20 @@ zpath = DIST / f"MOEIS-A4-Formatter-{version}.zip"
 with zipfile.ZipFile(zpath, "w", zipfile.ZIP_DEFLATED) as z:
     for p in sorted(p for p in EXT.rglob("*") if p.is_file()):
         z.write(p, p.relative_to(EXT).as_posix())
+
+# 2b) Unpacked extension folder at a fixed path, so Chrome's ↻ on a dist/ install picks up each new build.
+#     Old per-version folders are removed (the versioned zips stay as the release archive).
+for old in DIST.glob("MOEIS-A4-Formatter-*"):
+    if old.is_dir(): shutil.rmtree(old)
+upk = DIST / "MOEIS-A4-Formatter"
+shutil.rmtree(upk, ignore_errors=True)
+shutil.copytree(EXT, upk)
+
+# 2c) Release notes: every released version must have an entry
+notes = (ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
+if f"## {version} " not in notes:
+    raise SystemExit(f"CHANGELOG.md has no entry for {version}; add release notes first")
+shutil.copy(ROOT / "CHANGELOG.md", DIST / "RELEASE-NOTES.md")
 
 # 3) Bookmarklet from the shared core function a4FormatMoeis()
 m = re.search(r"function a4FormatMoeis\(\)\{(.*?)\nreturn groups\.length;\n\}", content, re.S)

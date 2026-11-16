@@ -4,9 +4,10 @@
 A Chrome extension (Manifest V3) that reformats **MOEIS PPB** report pages so each student's report prints on **one A4 portrait page**, keeping the site's original design (blue table headers, borders, logos).
 The owner is Fal (Falhaind Rubin), a teacher at SMJK Lok Yuk Kudat. He uses it for class reports. End users are Malaysian teachers, so user-facing text is in **Bahasa Melayu**.
 
-Supported pages (both under `https://moeissppb.moe.gov.my/laporan/`):
+Supported pages (all under `https://moeissppb.moe.gov.my/laporan/`):
 1. **Laporan PBD**: `/laporan/pbd/detail/...` (end-of-year classroom assessment report, one block per student)
 2. **Slip Keputusan Peperiksaan**: `/laporan/peperiksaan/individu/slip?all=1&tbt_peperiksaan_kelas_id=...`
+3. **Laporan Kemahiran BM/BI**: `/laporan/pbd/kemahiran/...` (no `div.book`; grouped by splitting body at empty page-break spacers, keeping runs that contain `.box`)
 
 ## Layout
 ```
@@ -19,7 +20,7 @@ extension/          ← the shippable extension (Load unpacked from here)
 scripts/build.py    builds dist/: extension zip, SHA256SUMS, bookmarklet.txt/.html
 docs/               page-structure.md (MOEIS DOM notes), security.md
 ```
-`dist/` is generated output, so never edit it by hand. Run `python3 scripts/build.py`.
+`dist/` is generated output, so never edit it by hand. The owner's Chrome loads the unpacked extension from `dist/MOEIS-A4-Formatter/`, a fixed path that build.py overwrites. After any code change, rebuild so ↻ picks it up. Run `python3 scripts/build.py`.
 
 ## How the formatter works (content.js → a4FormatMoeis)
 1. Injects `<style id="a4fix">`: `@page{size:A4 portrait;margin:10mm}`. On screen, each sheet shows as a 210×297 mm paper. In print, `.a4sheet` is 190×277 mm with `break-after:page`, and `body>*:not(.a4sheet)` is hidden.
@@ -34,7 +35,7 @@ docs/               page-structure.md (MOEIS DOM notes), security.md
 7. Fit-to-page: tries layout widths 760–1400 px (step 40), picks the width W that maximises `zoom = min(AW/W, AH/H)` where AW=190 mm, AH=277 mm at 96 dpi. It applies `zoom × 0.99`.
    Typical results: PBD ≈ 0.71 (≈8.5 px text), slip ≈ 0.94.
 
-Re-running on an already formatted page returns -1. A page refresh restores the original.
+Re-running on an already formatted page returns -1. A plain refresh re-formats, because the page's own `window.print()` on load triggers auto-format. To get the original, reload with `#a4-asal` (a4Run does this): content.js skips the auto-format once and strips the hash.
 
 ## Security invariants (do not regress)
 - No `permissions`, no `host_permissions`. Content script `matches` only `https://moeissppb.moe.gov.my/laporan/*`, `all_frames:false`, isolated world.
@@ -57,7 +58,8 @@ There is no automated test harness yet. Manual check:
 Tested on 16 Nov 2026 with class 4 Stanford (32 students) on both page types.
 
 ## Conventions
-- Bump `manifest.json` `version` for every release (current 1.1.0).
+- Bump `manifest.json` `version` for every release (current 1.2.3).
+- Add a `CHANGELOG.md` entry for every release (build.py refuses to build without one).
 - User-facing strings in Malay. Code comments in English.
 - Keep the core function self-contained, because `build.py` extracts `a4FormatMoeis()` by regex to build the bookmarklet. Keep its signature and the final `return groups.length;` line intact.
 

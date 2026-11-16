@@ -38,6 +38,7 @@ Re-running on an already formatted page returns -1. A page refresh restores the 
 
 ## Security invariants (do not regress)
 - No `permissions`, no `host_permissions`. Content script `matches` only `https://moeissppb.moe.gov.my/laporan/*`, `all_frames:false`, isolated world.
+  - One deliberate exception: `print-guard.js` runs in the MAIN world at document_start, only to replace `window.print` with a function that sets `document.documentElement.dataset.a4PrintRequested='1'`. It must stay that tiny: no data access, no network. `content.js` (isolated) reads the flag, runs `a4FormatMoeis()`, then calls `window.print()`.
 - Runtime guard `A4_OK` (https + exact hostname + `/laporan/` path + top frame) before anything runs.
 - Button handlers act only on `e.isTrusted` clicks. `onMessage` accepts only `sender.id === chrome.runtime.id && !sender.tab`.
 - Never add `fetch`/XHR/storage/cookies/`eval`/`innerHTML` with page data/remote code. The pages contain student personal data (IC numbers), and the extension must never read it out or transmit it.
@@ -56,7 +57,7 @@ There is no automated test harness yet. Manual check:
 Tested on 16 Nov 2026 with class 4 Stanford (32 students) on both page types.
 
 ## Conventions
-- Bump `manifest.json` `version` for every release (current 1.0.3).
+- Bump `manifest.json` `version` for every release (current 1.1.0).
 - User-facing strings in Malay. Code comments in English.
 - Keep the core function self-contained, because `build.py` extracts `a4FormatMoeis()` by regex to build the bookmarklet. Keep its signature and the final `return groups.length;` line intact.
 

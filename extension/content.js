@@ -13,6 +13,7 @@ body{width:auto!important;height:auto!important}
 .a4inner *{page-break-after:auto!important;break-after:auto!important;page-break-before:auto!important;break-before:auto!important}
 .a4inner .boxNew{width:auto!important;height:auto!important}
 .a4inner table{max-width:100%}
+.a4inner img{object-fit:contain!important}
 .a4inner .book,.a4inner .page{width:auto!important;height:auto!important;margin:0!important;padding:0!important;min-height:0!important}`;
 document.head.appendChild(st);
 const kids=[...document.body.children],groups=[];
@@ -70,4 +71,11 @@ if(A4_OK){
     if(m && m.cmd==='a4run') a4Run();
   });
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',a4AddButton); else a4AddButton();
+  // The page's own window.print() was intercepted by print-guard.js (MAIN world): format first, then print.
+  const de=document.documentElement;
+  if(de.dataset.a4PrintRequested==='1'){
+    delete de.dataset.a4PrintRequested;
+    a4FormatMoeis();
+    window.print();
+  }
 }

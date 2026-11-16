@@ -14,7 +14,7 @@
        - 10 × `<br>`
        - `TABLE` signatures (Guru Kelas, Pengetua/Guru Besar, Ibu Bapa/Penjaga)
   3. empty `DIV` (page-break spacer)
-- A trailing `CENTER` and `SCRIPT` at the end of body.
+- A trailing `CENTER` and an inline `SCRIPT` (`window.print();`) at the end of body; it prints the unformatted page on load (see Gotchas).
 
 ## Slip Keputusan Peperiksaan — `/laporan/peperiksaan/individu/slip?all=1&tbt_peperiksaan_kelas_id={id}`
 - Per student: `div.book` (contains logos, title, Nama/No. KP/Tahun/Jantina, subject table, summary, Nama Guru Kelas / Ulasan Guru Kelas), followed by
@@ -23,6 +23,7 @@
 - "Ulasan Guru Kelas" table is only ~408px wide (value cell 200px) → comment wraps unless widened.
 
 ## Gotchas
+- Both page types end with an inline `<script>window.print();</script>`, so the dialog opens before our `document_idle` content script runs. `print-guard.js` (MAIN world, `document_start`) overrides `window.print` to set `<html data-a4-print-requested="1">`; `content.js` then formats the page and calls `window.print()` itself.
 - Without `print-color-adjust:exact`, Chrome prints the white header text with no blue background (looks faint grey).
 - Elements outside `.a4sheet` (CENTER buttons) can create blank pages → hidden in print.
 - `.a4inner td` queries must run after wrapping, not before.

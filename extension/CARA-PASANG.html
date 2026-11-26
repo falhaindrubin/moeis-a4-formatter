@@ -1,0 +1,203 @@
+<meta charset="utf-8">
+<title>Panduan MOEIS A4 Formatter</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Figtree:wght@400;600;700&display=swap">
+<style>
+/* Layout: a single column of numbered steps, each pairing a short instruction with a small drawn mock of the screen. */
+:root{
+  --bg:#eef2f7; --paper:#ffffff; --ink:#15202e; --muted:#5b6878; --line:#d5dde7;
+  --blue:#1C67B0; --blue-soft:#e3eefa; --grey-btn:#5f6b7a; --ok:#1f8a4c; --warn:#b4541a; --warn-soft:#fdf0e6;
+  --mock:#f6f8fb; --chrome:#dfe5ec;
+  --display:"Bricolage Grotesque","Segoe UI",Arial,sans-serif;
+  --body:"Figtree","Segoe UI",Arial,sans-serif;
+  --mono:Consolas,"Courier New",monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f1620; --paper:#17212d; --ink:#e7edf4; --muted:#9aa8b8; --line:#2a3747;
+  --blue:#5aa2ec; --blue-soft:#1b3047; --grey-btn:#7d8a9a; --ok:#4cc584; --warn:#f0a06a; --warn-soft:#3a2617;
+  --mock:#1d2936; --chrome:#273444; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1620; --paper:#17212d; --ink:#e7edf4; --muted:#9aa8b8; --line:#2a3747;
+  --blue:#5aa2ec; --blue-soft:#1b3047; --grey-btn:#7d8a9a; --ok:#4cc584; --warn:#f0a06a; --warn-soft:#3a2617;
+  --mock:#1d2936; --chrome:#273444; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:17px/1.6 var(--body);margin:0}
+.wrap{max-width:860px;margin:0 auto;padding-block:32px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:40px}
+h1,h2{font-family:var(--display);line-height:1.15;text-wrap:balance;margin:0}
+h1{font-size:clamp(2rem,6vw,3rem);font-weight:800}
+h2{font-size:1.6rem;font-weight:800;display:flex;align-items:center;gap:12px}
+h2 .tag{font:700 .75rem/1 var(--body);letter-spacing:.08em;text-transform:uppercase;background:var(--blue);color:#fff;padding:6px 10px;border-radius:999px}
+p{margin:0}
+.lead{font-size:1.15rem;color:var(--muted);max-width:60ch}
+header{display:flex;flex-direction:column;gap:14px}
+.sheet-badge{display:inline-flex;align-items:center;gap:10px;font-weight:700;color:var(--blue)}
+.sheet-badge i{width:22px;height:31px;border:2px solid var(--blue);border-radius:2px;display:inline-block;position:relative;background:var(--paper)}
+.sheet-badge i::after{content:"";position:absolute;left:3px;right:3px;top:5px;height:2px;background:var(--blue);box-shadow:0 5px 0 var(--line),0 10px 0 var(--line),0 15px 0 var(--line)}
+
+.need{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.need div{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start}
+.need b{display:block}
+.need small{color:var(--muted);font-size:.9rem}
+.ico{font-size:1.6rem;line-height:1}
+
+section{display:flex;flex-direction:column;gap:18px}
+ol.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:14px;counter-reset:s}
+ol.steps>li{counter-increment:s;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:18px;display:grid;grid-template-columns:48px minmax(0,1fr) minmax(0,300px);gap:16px;align-items:center}
+ol.steps>li::before{content:counter(s);width:44px;height:44px;border-radius:50%;background:var(--blue);color:#fff;font:800 1.3rem/44px var(--display);text-align:center;align-self:start}
+.txt{display:flex;flex-direction:column;gap:6px;min-width:0}
+.txt h3{margin:0;font-size:1.12rem}
+.txt p{color:var(--muted)}
+kbd,code{font-family:var(--mono);font-size:.92em;background:var(--blue-soft);color:var(--ink);padding:1px 6px;border-radius:4px;overflow-wrap:anywhere}
+@media (max-width:700px){ol.steps>li{grid-template-columns:44px minmax(0,1fr)}.mock{grid-column:1/-1}}
+
+/* Drawn screen mocks */
+.mock{background:var(--mock);border:1px solid var(--line);border-radius:8px;overflow:hidden;font-size:.82rem;min-width:0}
+.bar{background:var(--chrome);padding:7px 10px;display:flex;gap:6px;align-items:center}
+.bar .dot{width:8px;height:8px;border-radius:50%;background:var(--line)}
+.url{flex:1;background:var(--paper);border-radius:999px;padding:3px 10px;font-family:var(--mono);font-size:.78rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.body{padding:12px;display:flex;flex-direction:column;gap:8px;position:relative;min-height:84px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.switch{width:34px;height:18px;border-radius:999px;background:var(--blue);position:relative;flex:none}
+.switch::after{content:"";position:absolute;right:2px;top:2px;width:14px;height:14px;border-radius:50%;background:#fff}
+.btnm{border:1.5px solid var(--blue);color:var(--blue);border-radius:6px;padding:4px 10px;font-weight:700;background:var(--paper)}
+.hl{outline:3px solid var(--warn);outline-offset:3px;border-radius:6px}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:8px;display:flex;gap:8px;align-items:center}
+.card .logo{width:22px;height:22px;border-radius:5px;background:var(--blue);flex:none}
+.pill{position:absolute;right:10px;bottom:10px;background:#1C67B0;color:#fff;border-radius:999px;padding:6px 12px;font-weight:700;box-shadow:0 2px 6px rgba(0,0,0,.3);white-space:nowrap}
+.pill.grey{background:#5f6b7a;bottom:44px}
+.files{display:flex;align-items:center;justify-content:center;gap:10px;padding:14px;font-weight:700}
+.files span{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:.75rem}
+.files .big{font-size:2rem;line-height:1}
+.sheets{display:flex;gap:8px;justify-content:center;padding:6px 0 30px}
+.sheets i{width:44px;height:62px;background:var(--paper);border:1px solid var(--line);box-shadow:0 1px 3px rgba(0,0,0,.15);position:relative}
+.sheets i::before{content:"";position:absolute;left:5px;right:5px;top:6px;height:6px;background:#1C67B0}
+.sheets i::after{content:"";position:absolute;left:5px;right:5px;top:16px;height:2px;background:var(--line);box-shadow:0 6px 0 var(--line),0 12px 0 var(--line),0 18px 0 var(--line),0 30px 0 var(--line)}
+.print{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;padding:12px}
+.print dt{color:var(--muted)}
+.print dd{margin:0;font-weight:700}
+
+.note{background:var(--warn-soft);border-left:4px solid var(--warn);border-radius:8px;padding:14px 16px}
+.note b{color:var(--warn)}
+.safe{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
+.safe div{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.safe b{display:block;margin-bottom:4px}
+.safe p{color:var(--muted);font-size:.95rem}
+details{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:12px 16px}
+details+details{margin-top:-8px}
+summary{cursor:pointer;font-weight:700}
+summary:focus-visible{outline:3px solid var(--blue);outline-offset:3px;border-radius:4px}
+details p{margin-top:8px;color:var(--muted)}
+footer{color:var(--muted);font-size:.9rem;border-top:1px solid var(--line);padding-top:16px}
+</style>
+
+<div class="wrap">
+<header>
+  <span class="sheet-badge"><i></i> 1 murid = 1 helai A4</span>
+  <h1>Panduan MOEIS A4 Formatter</h1>
+  <p class="lead">Laporan PBD, Laporan Kemahiran BM/BI dan Slip Peperiksaan dari MOEIS dicetak kemas, satu murid satu muka surat A4. Ikut langkah di bawah. Tiada pengetahuan IT diperlukan.</p>
+</header>
+
+<section>
+  <h2>Sebelum mula</h2>
+  <div class="need">
+    <div><span class="ico">💻</span><p><b>Komputer Windows</b><small>atau komputer riba sekolah</small></p></div>
+    <div><span class="ico">🌐</span><p><b>Google Chrome atau Microsoft Edge</b><small>bukan telefon atau tablet</small></p></div>
+    <div><span class="ico">🗜️</span><p><b>Fail zip</b><small>MOEIS-A4-Formatter-1.2.4.zip, daripada pembuatnya sendiri</small></p></div>
+  </div>
+</section>
+
+<section>
+  <h2><span class="tag">Sekali sahaja</span> Pasang</h2>
+  <ol class="steps">
+    <li>
+      <div class="txt"><h3>Extract fail zip</h3>
+        <p>Klik kanan fail zip → <b>Extract All…</b> → pilih folder <b>Documents</b> → <b>Extract</b>. Jangan padam folder ini selepas pasang.</p></div>
+      <div class="mock" aria-hidden="true"><div class="files"><span><span class="big">🗜️</span>.zip</span><span class="big">→</span><span><span class="big">📁</span>MOEIS-A4-Formatter</span></div></div>
+    </li>
+    <li>
+      <div class="txt"><h3>Buka halaman extension</h3>
+        <p>Di Chrome, taip <code>chrome://extensions</code> pada bar alamat dan tekan Enter. Di Edge, taip <code>edge://extensions</code>.</p></div>
+      <div class="mock" aria-hidden="true"><div class="bar"><span class="dot"></span><span class="dot"></span><span class="url hl">chrome://extensions</span></div><div class="body"><b>Extensions</b></div></div>
+    </li>
+    <li>
+      <div class="txt"><h3>Hidupkan "Developer mode"</h3>
+        <p>Klik suis <b>Developer mode</b> di penjuru kanan atas sehingga ia bertukar biru. Di Edge, suis ini ada di sebelah kiri bawah.</p></div>
+      <div class="mock" aria-hidden="true"><div class="bar"><span class="dot"></span><span class="dot"></span><span class="url">chrome://extensions</span></div><div class="body"><div class="row"><b>Extensions</b><span class="row hl" style="padding:2px 4px">Developer mode <span class="switch"></span></span></div></div></div>
+    </li>
+    <li>
+      <div class="txt"><h3>Klik "Load unpacked"</h3>
+        <p>Butang baharu muncul di kiri atas. Klik <b>Load unpacked</b>, buka folder <b>Documents → MOEIS-A4-Formatter</b>, kemudian klik <b>Select Folder</b>.</p></div>
+      <div class="mock" aria-hidden="true"><div class="bar"><span class="dot"></span><span class="dot"></span><span class="url">chrome://extensions</span></div><div class="body"><div class="row" style="justify-content:flex-start;gap:8px"><span class="btnm hl">Load unpacked</span><span class="btnm" style="opacity:.5">Pack extension</span></div></div></div>
+    </li>
+    <li>
+      <div class="txt"><h3>Siap! Semak kad extension</h3>
+        <p>Kad <b>MOEIS A4 Formatter</b> muncul dengan suis biru (hidup). Pilihan: klik ikon kepingan puzzle 🧩 di toolbar dan klik pin supaya ikonnya sentiasa kelihatan.</p></div>
+      <div class="mock" aria-hidden="true"><div class="body"><div class="card"><span class="logo"></span><div style="flex:1;min-width:0"><b>MOEIS A4 Formatter</b><br><span style="color:var(--muted)">1.2.4</span></div><span class="switch"></span></div></div></div>
+    </li>
+  </ol>
+  <div class="note"><b>Amaran "developer mode" semasa Chrome dibuka?</b> Ini perkara biasa untuk extension yang dipasang sendiri. Klik pangkah (×) untuk tutup. Jangan klik "Turn off" atau "Remove".</div>
+</section>
+
+<section>
+  <h2><span class="tag">Setiap kali</span> Guna</h2>
+  <ol class="steps">
+    <li>
+      <div class="txt"><h3>Buka laporan di MOEIS</h3>
+        <p>Log masuk MOEIS seperti biasa, kemudian buka <b>Laporan PBD</b>, <b>Laporan Kemahiran BM/BI</b> atau <b>Slip Peperiksaan</b> untuk kelas anda. Jika tetingkap cetak terus muncul, halaman sudah diformat secara automatik. Teruskan ke langkah 4.</p></div>
+      <div class="mock" aria-hidden="true"><div class="bar"><span class="dot"></span><span class="dot"></span><span class="url">moeissppb.moe.gov.my/laporan/pbd/…</span></div><div class="body"><b>Laporan PBD</b><span style="color:var(--muted)">Senarai murid kelas…</span></div></div>
+    </li>
+    <li>
+      <div class="txt"><h3>Klik butang biru "📄 Format A4"</h3>
+        <p>Butang ini ada di penjuru <b>kanan bawah</b> skrin. Anda juga boleh klik ikon extension di toolbar.</p></div>
+      <div class="mock" aria-hidden="true"><div class="bar"><span class="dot"></span><span class="dot"></span><span class="url">moeissppb.moe.gov.my/laporan/…</span></div><div class="body" style="min-height:96px"><span style="color:var(--muted)">Laporan murid…</span><span class="pill hl">📄 Format A4</span></div></div>
+    </li>
+    <li>
+      <div class="txt"><h3>Semak paparan A4</h3>
+        <p>Setiap murid kini dipaparkan sebagai sehelai kertas A4 putih. Tatal ke bawah untuk menyemak semua murid.</p></div>
+      <div class="mock" aria-hidden="true"><div class="body" style="padding-bottom:0"><div class="sheets"><i></i><i></i><i></i></div></div></div>
+    </li>
+    <li>
+      <div class="txt"><h3>Klik "🖨️ Cetak (Ctrl+P)"</h3>
+        <p>Pilih pencetak, atau <b>Save as PDF</b> untuk simpan. Pastikan saiz kertas <b>A4</b> dan susun atur <b>Portrait</b>. Tetapan lain tidak perlu diubah.</p></div>
+      <div class="mock" aria-hidden="true"><dl class="print"><dt>Destination</dt><dd>Save as PDF / pencetak</dd><dt>Layout</dt><dd>Portrait</dd><dt>Paper size</dt><dd>A4</dd><dt>Pages</dt><dd>All</dd></dl></div>
+    </li>
+    <li>
+      <div class="txt"><h3>Mahu paparan asal MOEIS?</h3>
+        <p>Klik butang kelabu <b>↩️ Paparan Asal</b> di atas butang Cetak. Muat semula biasa (F5) akan memformat semula secara automatik.</p></div>
+      <div class="mock" aria-hidden="true"><div class="body" style="min-height:96px"><span class="pill grey hl">↩️ Paparan Asal</span><span class="pill">🖨️ Cetak (Ctrl+P)</span></div></div>
+    </li>
+  </ol>
+</section>
+
+<section>
+  <h2><span class="tag">Versi baharu</span> Kemas kini</h2>
+  <ol class="steps">
+    <li><div class="txt"><h3>Extract zip baharu ke folder yang sama</h3><p>Pilih folder <b>Documents\MOEIS-A4-Formatter</b> yang sedia ada dan pilih <b>Replace</b> (gantikan) semua fail.</p></div></li>
+    <li><div class="txt"><h3>Muat semula extension</h3><p>Buka <code>chrome://extensions</code> dan klik butang anak panah bulat ↻ pada kad MOEIS A4 Formatter.</p></div></li>
+    <li><div class="txt"><h3>Semak nombor versi</h3><p>Nombor pada kad mesti sudah bertukar kepada versi baharu.</p></div></li>
+  </ol>
+</section>
+
+<section>
+  <h2>Masalah biasa</h2>
+  <div>
+    <details open><summary>Butang "📄 Format A4" tidak muncul</summary><p>Pastikan anda berada di halaman laporan (alamat bermula dengan moeissppb.moe.gov.my/laporan/) dan suis extension di chrome://extensions berwarna biru. Tekan F5 untuk muat semula halaman.</p></details>
+    <details open><summary>Keluar "Format halaman ini tidak dikenali"</summary><p>Jenis laporan itu belum disokong. Hanya Laporan PBD, Laporan Kemahiran BM/BI dan Slip Peperiksaan disokong buat masa ini. Cetak seperti biasa dari MOEIS.</p></details>
+    <details open><summary>Extension hilang selepas komputer dibuka semula</summary><p>Folder MOEIS-A4-Formatter mungkin telah dipadam atau dipindahkan. Extract semula zip ke Documents dan ulang langkah pasang 4 (Load unpacked).</p></details>
+    <details open><summary>Tulisan terpotong di bawah muka surat</summary><p>Pastikan anda menggunakan versi terkini (1.2.4 atau lebih baharu). Di tetingkap cetak, pastikan Paper size A4 dan Scale "Default".</p></details>
+  </div>
+</section>
+
+<section>
+  <h2>Keselamatan & data murid</h2>
+  <div class="safe">
+    <div><b>🔒 Tiada data dihantar</b><p>Extension hanya menyusun semula paparan di komputer anda. Ia tidak membaca, menyimpan atau menghantar maklumat murid.</p></div>
+    <div><b>🎯 Aktif di MOEIS sahaja</b><p>Hanya berfungsi di halaman moeissppb.moe.gov.my/laporan/. Tiada kebenaran khas diminta.</p></div>
+    <div><b>📄 Jaga PDF (PDPA)</b><p>PDF slip dan laporan mengandungi No. KP murid. Kongsi dengan berhati-hati dan padam salinan yang tidak diperlukan.</p></div>
+    <div><b>✅ Sumber dipercayai</b><p>Dapatkan fail zip hanya daripada pembuatnya sendiri. Jangan pasang salinan daripada orang yang tidak dikenali.</p></div>
+  </div>
+</section>
+
+<footer>MOEIS A4 Formatter · panduan untuk versi 1.2.4 · Bukan aplikasi rasmi KPM.</footer>
+</div>

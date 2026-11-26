@@ -58,7 +58,7 @@ There is no automated test harness yet. Manual check:
 Tested on 16 Nov 2026 with class 4 Stanford (32 students) on both page types.
 
 ## Conventions
-- Bump `manifest.json` `version` for every release (current 1.2.3).
+- Bump `manifest.json` `version` for every release (current 1.2.4).
 - Add a `CHANGELOG.md` entry for every release (build.py refuses to build without one).
 - User-facing strings in Malay. Code comments in English.
 - Keep the core function self-contained, because `build.py` extracts `a4FormatMoeis()` by regex to build the bookmarklet. Keep its signature and the final `return groups.length;` line intact.

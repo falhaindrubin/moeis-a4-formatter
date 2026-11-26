@@ -1,5 +1,9 @@
 # Release notes
 
+## 1.2.4 — 2026-11-26
+- Fix: PBD signature names (Guru Kelas, Pengetua / Guru Besar) were cut off at the bottom of the page. The fit-to-page step now re-measures the height after zooming, because zoom changes the line wrapping, and keeps ~3% spare room for print reflow (was 1%).
+- Fix: the automatic format triggered by the page's own print now waits for images (logos) to load before measuring.
+
 ## 1.2.3 — 2026-11-16
 - New: "↩️ Paparan Asal" button (grey, above "Cetak") after formatting, including after the automatic format triggered by the page's own print. It reloads the page in the original MOEIS layout. It is hidden in print.
 - Install guide (CARA-PASANG.txt) updated: Kemahiran report, versioned zip name, how to update, Paparan Asal.

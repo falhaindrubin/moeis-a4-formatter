@@ -40,7 +40,10 @@ groups.forEach(g=>{const hdr=g[0],book=g[g.length-1];
   if(box){let run=[];[...box.children].forEach(k=>{if(k.tagName==='BR')run.push(k);else{if(run.length>=8)run.slice(4).forEach(b=>b.remove());run=[];}});}
   let best=null;
   for(let W=760;W<=1400;W+=40){inner.style.zoom=1;inner.style.width=W+'px';const H=inner.scrollHeight;const f=Math.min(AW/W,AH/H);if(!best||f>best.f)best={W,f};}
-  inner.style.width=best.W+'px';inner.style.zoom=(best.f*0.99).toFixed(4);
+  // Zoom changes font rounding and line wrapping, so the zoomed height can exceed the zoom-1 estimate
+  // (clipped the signature names). Re-measure after zooming and shrink until it fits with ~3% slack for print reflow.
+  inner.style.width=best.W+'px';let z=best.f*0.97;
+  for(let i=0;i<6;i++){inner.style.zoom=z.toFixed(4);const h=inner.getBoundingClientRect().height;if(h<=AH*0.97)break;z*=AH*0.97/h;}
 });
 return groups.length;
 }
@@ -96,6 +99,8 @@ if(A4_OK){
   const de=document.documentElement;
   if(de.dataset.a4PrintRequested==='1'){
     delete de.dataset.a4PrintRequested;
-    if(!keepOriginal){ if(a4FormatMoeis()>0) a4Formatted(); window.print(); }
+    // Wait for images (logos): measuring before they load underestimates height and clips the page bottom.
+    const go=()=>{ if(a4FormatMoeis()>0) a4Formatted(); window.print(); };
+    if(!keepOriginal){ if(document.readyState==='complete') go(); else window.addEventListener('load',go,{once:true}); }
   }
 }
